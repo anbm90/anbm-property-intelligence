@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const nav = [
+  { href: '/report', label: 'Property Report', icon: '📊' },
   { href: '/dashboard', label: 'Dashboard', icon: '◈' },
   { href: '/properties', label: 'Properties', icon: '⌂' },
   { href: '/deal-pipeline', label: 'Deal Pipeline', icon: '◎' },
