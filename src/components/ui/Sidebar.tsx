@@ -10,7 +10,7 @@ const nav = [
   { href: '/flip-vs-hold', label: 'Flip vs Hold', icon: '⇅' },
   { href: '/trade-rates', label: 'Trade Rates', icon: '⚒' },
   { href: '/sourcing', label: 'China Sourcing', icon: '⊡' },
-  { href: '/notes', label: 'Notes & History', icon: '✎' },
+  { href: '/notes', label: 'Notes', icon: '✎' },
   { href: '/alerts', label: 'Alerts', icon: '◉' },
 ]
 
