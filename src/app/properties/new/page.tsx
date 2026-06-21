@@ -9,6 +9,7 @@ export default function NewPropertyPage() {
   const router = useRouter()
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
+  const [scanning, setScanning] = useState(false)
   const [form, setForm] = useState({
     nickname: '', address: '', suburb: '', state: 'NSW', postcode: '',
     property_type: 'house', land_size_sqm: '', floor_area_sqm: '',
@@ -28,6 +29,44 @@ export default function NewPropertyPage() {
   })
 
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }))
+
+  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setScanning(true)
+    try {
+      const fd = new FormData()
+      fd.append('image', file)
+      const res = await fetch('/api/scan-listing', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (data.success && data.data) {
+        const d = data.data
+        setForm(f => ({ ...f,
+          address: d.address ?? f.address,
+          suburb: d.suburb ?? f.suburb,
+          state: d.state ?? f.state,
+          postcode: d.postcode ?? f.postcode,
+          asking_price: d.asking_price ? String(d.asking_price) : f.asking_price,
+          purchase_price: d.asking_price ? String(d.asking_price) : f.purchase_price,
+          property_type: d.property_type ?? f.property_type,
+          bedrooms: d.bedrooms ? String(d.bedrooms) : f.bedrooms,
+          bathrooms: d.bathrooms ? String(d.bathrooms) : f.bathrooms,
+          car_spaces: d.car_spaces ? String(d.car_spaces) : f.car_spaces,
+          land_size_sqm: d.land_size_sqm ? String(d.land_size_sqm) : f.land_size_sqm,
+          floor_area_sqm: d.floor_area_sqm ? String(d.floor_area_sqm) : f.floor_area_sqm,
+          agent_name: d.agent_name ?? f.agent_name,
+          agent_phone: d.agent_phone ?? f.agent_phone,
+          notes: d.notes ?? f.notes,
+          nickname: d.address ? d.address.split(',')[0] : f.nickname,
+        }))
+      } else {
+        alert('Could not read the image — fill in manually')
+      }
+    } catch {
+      alert('Scan failed — fill in manually')
+    }
+    setScanning(false)
+  }
 
   const calcStampDuty = (price: number) => {
     if (!price) return 0
@@ -53,8 +92,7 @@ export default function NewPropertyPage() {
       Number(form.score_growth_potential) * 0.12,
       Number(form.score_renovation_complexity) * 0.08,
     ]
-    const total = scores.reduce((a, b) => a + b, 0)
-    return Math.round(total * 10)
+    return Math.round(scores.reduce((a, b) => a + b, 0) * 10)
   }
 
   const getGrade = (score: number) => {
@@ -74,7 +112,7 @@ export default function NewPropertyPage() {
   const handleSave = async () => {
     if (!form.nickname || !form.address) { alert('Add a nickname and address'); return }
     setSaving(true)
-    const { data, error } = await supabase.from('properties').insert({
+    const { error } = await supabase.from('properties').insert({
       nickname: form.nickname,
       address: form.address,
       suburb: form.suburb,
@@ -115,8 +153,7 @@ export default function NewPropertyPage() {
       da_complexity: form.da_complexity as any || null,
       rental_estimate_weekly: Number(form.rental_estimate_weekly) || null,
       suburb_annual_growth_pct: Number(form.suburb_annual_growth_pct) || null,
-    }).select().single()
-
+    })
     if (error) { alert('Error: ' + error.message); setSaving(false); return }
     router.push('/dashboard')
   }
@@ -143,7 +180,21 @@ export default function NewPropertyPage() {
       <main className="main-content" style={{ maxWidth: 860 }}>
         <div style={{ marginBottom: '1.5rem' }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Add property</h1>
-          <p style={{ fontSize: 14, color: '#888' }}>Fill in what you know — score it and save</p>
+          <p style={{ fontSize: 14, color: '#888' }}>Upload a screenshot or fill in manually</p>
+        </div>
+
+        {/* Screenshot scan */}
+        <div className="card" style={{ borderStyle: 'dashed', borderColor: '#d4a843', marginBottom: 16 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>📸 Scan listing screenshot</div>
+          <div style={{ fontSize: 13, color: '#888', marginBottom: 12 }}>Upload a Domain or REA screenshot — AI reads the address, price, beds, baths automatically</div>
+          <input type="file" accept="image/*,.pdf" style={{ display: 'none' }} id="scan-input" onChange={handleScan} />
+          <label htmlFor="scan-input" style={{
+            background: scanning ? '#888' : '#d4a843',
+            color: '#1a1a1a', padding: '10px 20px', borderRadius: 8,
+            fontSize: 14, fontWeight: 600, cursor: scanning ? 'not-allowed' : 'pointer', display: 'inline-block'
+          }}>
+            {scanning ? 'Scanning...' : 'Upload screenshot →'}
+          </label>
         </div>
 
         {/* Property details */}
