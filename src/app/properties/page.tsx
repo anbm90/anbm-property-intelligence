@@ -74,8 +74,4 @@ export default function PropertiesPage() {
       </main>
     </div>
   )
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 546743663d61163f2a82cdf38dc35d53cfa31d68
