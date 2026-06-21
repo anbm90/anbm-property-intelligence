@@ -1,65 +1,164 @@
-'use client'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-const nav = [
-  { href: '/report', label: 'Property Report', icon: '📊' },
-  { href: '/dashboard', label: 'Dashboard', icon: '◈' },
-  { href: '/properties', label: 'Properties', icon: '⌂' },
-  { href: '/deal-pipeline', label: 'Deal Pipeline', icon: '◎' },
-  { href: '/build-scope', label: 'Build Scope', icon: '⊞' },
-  { href: '/flip-vs-hold', label: 'Flip vs Hold', icon: '⇅' },
-  { href: '/trade-rates', label: 'Trade Rates', icon: '⚒' },
-  { href: '/sourcing', label: 'China Sourcing', icon: '⊡' },
-  { href: '/notes', label: 'Notes', icon: '✎' },
-  { href: '/alerts', label: 'Alerts', icon: '◉' },
-]
-
-export default function Sidebar() {
-  const path = usePathname()
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <div className="mobile-header">
-        <button onClick={() => setOpen(!open)} style={{ background: 'none', border: 'none', color: 'white', fontSize: 22, cursor: 'pointer', padding: 0 }}>☰</button>
-        <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>ANBM Property Intelligence</div>
-      </div>
-
-      {open && <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99 }} />}
-
-      <aside className={`sidebar${open ? ' open' : ''}`}>
-        <div style={{ padding: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: '#d4a843', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 4 }}>A.N Building & Management</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>Property Intelligence</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>Lic. 494053C</div>
-        </div>
-        <nav style={{ padding: '0.5rem 0' }}>
-          {nav.map(item => {
-            const active = path === item.href || path.startsWith(item.href + '/')
-            return (
-              <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setOpen(false)}>
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '9px 1.25rem', fontSize: 13,
-                  fontWeight: active ? 600 : 400,
-                  color: active ? '#d4a843' : 'rgba(255,255,255,0.6)',
-                  background: active ? 'rgba(212,168,67,0.1)' : 'transparent',
-                  borderRight: active ? '3px solid #d4a843' : '3px solid transparent',
-                }}>
-                  <span style={{ fontSize: 15, width: 20, textAlign: 'center' }}>{item.icon}</span>
-                  {item.label}
-                </div>
-              </Link>
-            )
-          })}
-        </nav>
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '1rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>ABN 22 692 915 218</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Ramsgate Beach NSW 2217</div>
-        </div>
-      </aside>
-    </>
-  )
+:root {
+  --color-anbm: #1a1a2e;
+  --color-gold: #d4a843;
+  --sidebar-width: 240px;
 }
+
+body {
+  background: #f5f5f0;
+  color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.app-shell { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-anbm);
+  min-height: 100vh;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  transition: transform 0.3s;
+}
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 220px;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  .mobile-header {
+    display: flex !important;
+  }
+}
+
+.mobile-header {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #1a1a2e;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  margin: -1rem -1rem 1rem -1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  padding: 1.25rem;
+  margin-bottom: 12px;
+}
+
+.btn-primary {
+  background: #1a1a2e;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-gold {
+  background: #d4a843;
+  color: #1a1a1a;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #444;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e8e8e8;
+  padding: 0.875rem 1rem;
+}
+
+.metric-label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.flag-box {
+  border-left: 4px solid;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.flag-danger { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+.flag-warning { border-color: #f59e0b; background: #fffbeb; color: #92400e; }
+.flag-success { border-color: #22c55e; background: #f0fdf4; color: #166534; }
+.flag-info { border-color: #3b82f6; background: #eff6ff; color: #1e40af; }
+
+.highlight-box {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 12px;
+}
+
+.highlight-box .metric-label { color: rgba(255,255,255,0.6); }
+.highlight-box .metric-value { color: #d4a843; }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #e8e8e8; background: #fafafa; }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+.data-table tr:hover td { background: #fafafa; }
+
+.form-input { width: 100%; padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; color: #1a1a1a; background: white; box-sizing: border-box; }
+.form-input:focus { outline: none; border-color: #d4a843; }
+.form-label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.text-profit { color: #166534; font-weight: 600; }
+.text-loss { color: #991b1b; font-weight: 600; }
