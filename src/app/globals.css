@@ -35,6 +35,7 @@ body {
   padding: 1.5rem;
 }
 
+/* Mobile */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
